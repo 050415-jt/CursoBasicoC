@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aprende C# viendo cómo funciona</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#eaf1f7;--ink:#14213d;--mut:#5b6b84;--card:#fff;--line:#c9d6e4;--cs:#68217a;
+--int:#0284c7;--dbl:#7c3aed;--str:#15803d;--bool:#ea580c;--code:#101a30;--ok:#16a34a;--no:#dc2626}
+*{box-sizing:border-box}
+body{margin:0;color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif;
+background-color:var(--paper);background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:28px 28px}
+.wrap{max-width:980px;margin:0 auto;padding:24px 16px 56px}
+h1,h2{font-family:"Bricolage Grotesque",system-ui,sans-serif;margin:0}
+h1{font-size:clamp(2rem,6vw,3.4rem);font-weight:800;line-height:1.05}
+h1 b{color:var(--cs)}
+.lead{color:var(--mut);max-width:60ch;margin:10px 0 22px}
+nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+nav button{font:600 1rem "Bricolage Grotesque",sans-serif;padding:10px 18px;border:2px solid var(--ink);background:var(--card);color:var(--ink);border-radius:10px;cursor:pointer}
+nav button[aria-selected=true]{background:var(--ink);color:#fff}
+:focus-visible{outline:3px solid var(--cs);outline-offset:2px}
+section{display:none;background:var(--card);border:2px solid var(--ink);border-radius:14px;padding:22px;box-shadow:6px 6px 0 var(--ink)}
+section.on{display:block}
+h2{font-size:1.6rem;margin-bottom:6px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:16px}
+@media(max-width:760px){.grid{grid-template-columns:1fr}}
+.ctl{display:grid;gap:10px}
+label{display:grid;gap:4px;font-weight:600;font-size:.9rem}
+input[type=text],input[type=number]{font:inherit;padding:8px 10px;border:2px solid var(--line);border-radius:8px;width:100%}
+input[type=range]{width:100%;accent-color:var(--cs)}
+pre{margin:0;background:var(--code);color:#e6edf7;padding:14px;border-radius:10px;font:14px/1.7 "JetBrains Mono",ui-monospace,monospace;overflow-x:auto}
+pre div{padding:0 6px;border-radius:4px;white-space:pre;transition:background .2s}
+pre div.hot{background:#3b2a6b}
+pre div.dim{opacity:.35}
+.k{color:#c792ea}.s{color:#9ece6a}.n{color:#ffb86c}.c{color:#7dcfff}.m{color:#7a8ba8}
+.console{background:#000;color:#4ade80;font:14px/1.6 "JetBrains Mono",monospace;padding:12px 14px;border-radius:10px;min-height:76px;margin-top:12px}
+.console:before{content:"Consola";display:block;color:#7a8ba8;font-size:.75rem;margin-bottom:4px}
+.boxes{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.box{border:3px solid var(--c);border-radius:12px;padding:8px 10px;text-align:center;background:color-mix(in srgb,var(--c) 8%,#fff)}
+.box small{display:block;font:600 .8rem "JetBrains Mono",monospace;color:var(--c)}
+.box .nm{font-weight:700}
+.box .v{font:600 1.3rem "JetBrains Mono",monospace;word-break:break-all}
+.box.pop{animation:pop .35s}
+@keyframes pop{50%{transform:scale(1.08)}}
+.tip{background:#f3e8f8;border-left:5px solid var(--cs);padding:10px 12px;border-radius:0 8px 8px 0;margin-top:14px;font-size:.92rem}
+.flow{display:grid;gap:8px}
+.cond{display:flex;align-items:center;gap:10px;padding:10px 12px;border:2px dashed var(--line);border-radius:10px;opacity:.45;font:600 .95rem "JetBrains Mono",monospace}
+.cond.ev{opacity:1;border-style:solid}
+.cond.t{border-color:var(--ok);background:#e7f8ed}
+.cond.f{border-color:var(--no);background:#fdecec}
+.cond i{margin-left:auto;font-style:normal;font-weight:800}
+.big{font:800 2.6rem "Bricolage Grotesque",sans-serif;text-align:center}
+.dots{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.dot{width:40px;height:40px;border-radius:50%;border:3px solid var(--line);display:grid;place-items:center;font:600 .95rem "JetBrains Mono",monospace;color:var(--mut);transition:.25s}
+.dot.done{background:var(--ink);border-color:var(--ink);color:#fff}
+.dot.cur{background:var(--cs);border-color:var(--cs);color:#fff;transform:scale(1.2)}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.btns button{font:600 .95rem system-ui;padding:9px 14px;border-radius:8px;border:2px solid var(--ink);background:var(--card);cursor:pointer}
+.btns button.p{background:var(--cs);border-color:var(--cs);color:#fff}
+.st{font:600 .9rem "JetBrains Mono",monospace;background:#f1f5f9;border-radius:8px;padding:8px 10px;margin-top:6px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Aprende <b>C#</b> viendo cómo funciona</h1>
+  <p class="lead">Cambia los valores, mira cómo cambia el código y qué pasa dentro del programa. Tres ideas básicas: guardar datos, tomar decisiones y repetir tareas.</p>
+
+  <nav role="tablist">
+    <button role="tab" aria-selected="true" data-t="v">1. Variables</button>
+    <button role="tab" aria-selected="false" data-t="c">2. Condicionales</button>
+    <button role="tab" aria-selected="false" data-t="b">3. Bucles</button>
+  </nav>
+
+  <!-- VARIABLES -->
+  <section id="v" class="on">
+    <h2>Variables: cajas con nombre</h2>
+    <p>Una variable guarda un dato en la memoria. Cada caja tiene un <b>tipo</b>, un <b>nombre</b> y un <b>valor</b>.</p>
+    <div class="grid">
+      <div>
+        <div class="ctl">
+          <label>nombre (texto)<input type="text" id="vn" value="Ana" maxlength="14"></label>
+          <label>edad (número entero)<input type="number" id="ve" value="17" step="1" min="0" max="120"></label>
+          <label>precio (número decimal)<input type="number" id="vp" value="19.99" step="0.01"></label>
+          <label>esEstudiante (verdadero o falso)
+            <input type="range" id="vb" min="0" max="1" value="1"></label>
+        </div>
+        <div class="boxes" id="boxes" style="margin-top:14px"></div>
+      </div>
+      <div>
+        <pre id="vcode"></pre>
+        <div class="console" id="vout"></div>
+      </div>
+    </div>
+    <div class="tip">Fíjate: en C# un <code>bool</code> se escribe en minúscula (<code>true</code>) pero al imprimirlo aparece como <code>True</code>. Y el decimal usa punto: <code>19.99</code>.</div>
+  </section>
+
+  <!-- CONDICIONALES -->
+  <section id="c">
+    <h2>Condicionales: el programa decide</h2>
+    <p>Con <code>if</code> el programa revisa las condiciones en orden. Ejecuta el primer bloque que sea verdadero y se salta el resto.</p>
+    <div class="grid">
+      <div>
+        <label>nota = <output id="cv">7</output>
+          <input type="range" id="cn" min="0" max="10" step="0.5" value="7"></label>
+        <div class="big" id="cbig">7</div>
+        <div class="flow" id="flow"></div>
+      </div>
+      <div>
+        <pre id="ccode"></pre>
+        <div class="console" id="cout"></div>
+      </div>
+    </div>
+    <div class="tip">Mueve el control hasta 9: la primera condición ya es verdadera y las demás ni se revisan (se ven apagadas).</div>
+  </section>
+
+  <!-- BUCLES -->
+  <section id="b">
+    <h2>Bucles: repetir sin copiar y pegar</h2>
+    <p>Un <code>for</code> tiene tres partes: dónde empieza <code>i</code>, hasta cuándo sigue y cuánto cambia en cada vuelta.</p>
+    <div class="grid">
+      <div>
+        <div class="ctl">
+          <label>tabla = <output id="tv">3</output><input type="range" id="tb" min="1" max="10" value="3"></label>
+          <label>hasta = <output id="hv">6</output><input type="range" id="hs" min="1" max="10" value="6"></label>
+        </div>
+        <div class="dots" id="dots"></div>
+        <div class="st" id="lst">Pulsa "Paso" para empezar.</div>
+        <div class="btns">
+          <button class="p" id="bstep">Paso</button>
+          <button id="bplay">Ejecutar todo</button>
+          <button id="breset">Reiniciar</button>
+        </div>
+      </div>
+      <div>
+        <pre id="lcode"></pre>
+        <div class="console" id="lout"></div>
+      </div>
+    </div>
+    <div class="tip">Cada círculo es una vuelta. Cuando <code>i</code> supera el límite, la condición es falsa y el bucle termina.</div>
+  </section>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const esc=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+function hl(s){
+  return esc(s).replace(/(\/\/.*)|(".*?")|(\b\d+(?:\.\d+)?\b)|\b(int|double|string|bool|if|else|for|true|false)\b|\b(Console)\b/g,
+   (m,com,str,num,kw,cl)=>com?`<span class=m>${m}</span>`:str?`<span class=s>${m}</span>`:num?`<span class=n>${m}</span>`:kw?`<span class=k>${m}</span>`:`<span class=c>${m}</span>`);
+}
+const lines=(el,arr,hot)=>{el.innerHTML=arr.map((l,i)=>`<div class="${hot?(hot.includes(i)?'hot':(hot.length?'dim':'')):''}">${hl(l)||' '}</div>`).join("")};
+const con=(el,arr)=>el.innerHTML=arr.map(l=>`<div>&gt; ${esc(l)}</div>`).join("");
+
+/* Pestañas */
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("nav button").forEach(x=>x.setAttribute("aria-selected",x===b));
+  document.querySelectorAll("section").forEach(s=>s.classList.toggle("on",s.id===b.dataset.t));
+});
+
+/* 1. Variables */
+let prev={};
+function vars(){
+  const n=$("vn").value, e=Math.trunc(+$("ve").value||0), p=+$("vp").value||0, b=$("vb").value==="1";
+  const items=[
+    ["string","nombre",`"${n.replace(/"/g,'\\"')}"`,"--str"],
+    ["int","edad",e,"--int"],
+    ["double","precio",p,"--dbl"],
+    ["bool","esEstudiante",b,"--bool"]];
+  $("boxes").innerHTML=items.map(([t,nm,v,c])=>{
+    const changed=prev[nm]!==undefined&&prev[nm]!==String(v);
+    prev[nm]=String(v);
+    return `<div class="box${changed?' pop':''}" style="--c:var(${c})"><small>${t}</small><div class="nm">${nm}</div><div class="v">${esc(String(v))}</div></div>`}).join("");
+  lines($("vcode"),[
+    `string nombre = "${n.replace(/"/g,'\\"')}";`,
+    `int edad = ${e};`,
+    `double precio = ${p};`,
+    `bool esEstudiante = ${b};`,
+    ``,
+    `Console.WriteLine("Hola " + nombre);`,
+    `Console.WriteLine("Edad: " + edad);`,
+    `Console.WriteLine("Total: " + precio);`,
+    `Console.WriteLine(esEstudiante);`]);
+  con($("vout"),["Hola "+n,"Edad: "+e,"Total: "+p,b?"True":"False"]);
+}
+["vn","ve","vp","vb"].forEach(i=>$(i).oninput=vars);vars();
+
+/* 2. Condicionales */
+function cond(){
+  const x=+$("cn").value;
+  $("cv").textContent=$("cbig").textContent=x;
+  const tests=[["nota >= 9",x>=9,"Excelente"],["nota >= 6",x>=6,"Aprobado"],["else",true,"Reprobado"]];
+  const win=tests.findIndex(t=>t[1]);
+  $("flow").innerHTML=tests.map((t,i)=>{
+    const ev=i<=win, cls=ev?(i===win?"ev t":"ev f"):"";
+    const mark=!ev?"":(i===win?"✔ verdadero":"✘ falso");
+    return `<div class="cond ${cls}">${i<2?"¿ "+t[0]+" ?":"en cualquier otro caso"}<i>${i===2&&ev?"✔ se ejecuta":mark}</i></div>`}).join("");
+  const code=[`double nota = ${x};`,`if (nota >= 9)`,`{`,`    Console.WriteLine("Excelente");`,`}`,`else if (nota >= 6)`,`{`,`    Console.WriteLine("Aprobado");`,`}`,`else`,`{`,`    Console.WriteLine("Reprobado");`,`}`];
+  const hotSets=[[1,2,3,4],[5,6,7,8],[9,10,11,12]];
+  lines($("ccode"),code,hotSets[win]);
+  con($("cout"),[tests[win][2]]);
+}
+$("cn").oninput=cond;cond();
+
+/* 3. Bucles */
+let idx=0,fin=false,out=[],timer=null;
+function loopCode(hot){
+  const t=$("tb").value,h=$("hs").value;
+  lines($("lcode"),[`int tabla = ${t};`,`for (int i = 1; i <= ${h}; i++)`,`{`,`    Console.WriteLine(tabla + " x " + i + " = " + (tabla * i));`,`}`],hot);
+}
+function draw(){
+  const t=+$("tb").value,h=+$("hs").value;
+  $("tv").textContent=t;$("hv").textContent=h;
+  $("dots").innerHTML=Array.from({length:h},(_,k)=>`<div class="dot ${k+1<idx?'done':''} ${k+1===idx&&!fin?'cur':''}${k+1===idx&&fin?' done':''}">${k+1}</div>`).join("");
+  $("lst").textContent=idx===0?'Pulsa "Paso" para empezar.':fin?`i = ${h+1} → ${h+1} <= ${h} es false: el bucle termina.`:`i = ${idx} → ${idx} <= ${h} es true: entra al bloque.`;
+  loopCode(idx===0?[]:fin?[1]:[1,3]);
+  con($("lout"),out);
+}
+function step(){
+  const t=+$("tb").value,h=+$("hs").value;
+  if(fin)return stop();
+  if(idx<h){idx++;out.push(`${t} x ${idx} = ${t*idx}`)}else fin=true;
+  draw();if(fin)stop();
+}
+function stop(){clearInterval(timer);timer=null;$("bplay").textContent="Ejecutar todo"}
+function reset(){stop();idx=0;fin=false;out=[];draw()}
+$("bstep").onclick=step;
+$("breset").onclick=reset;
+$("bplay").onclick=()=>{
+  if(timer)return stop();
+  if(fin)reset();
+  $("bplay").textContent="Pausar";
+  timer=setInterval(step,650);
+};
+$("tb").oninput=$("hs").oninput=reset;
+reset();
+</script>
+</body>
+</html>
